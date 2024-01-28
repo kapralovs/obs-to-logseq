@@ -13,7 +13,7 @@ func Test_convertNote(t *testing.T) {
 	}{
 		{
 			name:    "Valid content",
-			want:    []byte("Это заметка про язык программирования [[Golang]]."),
+			want:    []byte("Это заметка про язык программирования [[Golang]]"),
 			wantErr: false,
 		},
 		{
@@ -61,8 +61,15 @@ func Test_createLogseqNote(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name:    "Empty arg",
-			args:    args{},
+			name: "Empty bytes slice",
+			args: args{
+				content: []byte{},
+			},
+			wantErr: false,
+		},
+		{
+			name:    "Nil arg",
+			args:    args{content: nil},
 			wantErr: true,
 		},
 		// TODO: Add test cases.
