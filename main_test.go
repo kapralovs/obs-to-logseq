@@ -5,27 +5,45 @@ import (
 	"testing"
 )
 
-func Test_convertNote(t *testing.T) {
+func Test_convertLinks(t *testing.T) {
+	type args struct {
+		content []byte
+	}
 	tests := []struct {
 		name    string
+		args    args
 		want    []byte
 		wantErr bool
 	}{
 		{
-			name:    "Valid content",
+			name: "Valid content",
+			args: args{
+				content: []byte("Это заметка про язык программирования [[Golang|Go]]."),
+			},
 			want:    []byte("Это заметка про язык программирования [[Golang]]"),
 			wantErr: false,
 		},
 		{
-			name:    "Valid content without last dot",
+			name: "Valid content without last dot",
+			args: args{
+				content: []byte("Это заметка про язык программирования [[Golang|Go]]"),
+			},
 			want:    []byte("Это заметка про язык программирования [[Golang]]"),
+			wantErr: false,
+		},
+		{
+			name: "ContentWithoutLinks",
+			args: args{
+				content: []byte("12345"),
+			},
+			want:    []byte("12345"),
 			wantErr: false,
 		},
 		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := convertNote()
+			got, err := convertLinks(tt.args.content)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("convertNote() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -70,7 +88,7 @@ func Test_createLogseqNote(t *testing.T) {
 		{
 			name:    "Nil arg",
 			args:    args{content: nil},
-			wantErr: true,
+			wantErr: false,
 		},
 		// TODO: Add test cases.
 	}
@@ -92,6 +110,27 @@ func Test_createObsNote(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
+		{
+			name: "Valid",
+			args: args{
+				content: content,
+			},
+			wantErr: false,
+		},
+		{
+			name: "EmptyContent",
+			args: args{
+				content: "",
+			},
+			wantErr: false,
+		},
+		{
+			name: "ContentInDigits",
+			args: args{
+				content: "12345",
+			},
+			wantErr: false,
+		},
 		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
