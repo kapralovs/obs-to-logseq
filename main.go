@@ -13,13 +13,19 @@ const (
 )
 
 func main() {
-	// Create note in Obsidian style
+	// Create note in Obsidian style (TODO:move to examples)
 	if err := createObsNote(content); err != nil {
 		log.Fatal(err)
 	}
 
 	// Convert note from Obsidian style and get updated content in Logseq style
-	updatedContent, err := convertNote()
+	contentBytes, err := openObsidianNote()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Convert note from Obsidian style and get updated content in Logseq style
+	updatedContent, err := convertLinks(contentBytes)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -45,7 +51,22 @@ func createObsNote(content string) error {
 	return nil
 }
 
-func convertNote() ([]byte, error) {
+func createLogseqNote(content []byte) error {
+	file, err := os.Create(logseqFileName)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	_, err = file.Write(content)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func openObsidianNote() ([]byte, error) {
 	file, err := os.Open(obsdianFileName)
 	if err != nil {
 		log.Fatal(err)
@@ -57,6 +78,10 @@ func convertNote() ([]byte, error) {
 		log.Fatal(err)
 	}
 
+	return byteContent, nil
+}
+
+func convertLinks(byteContent []byte) ([]byte, error) {
 	var (
 		content            = string(byteContent)
 		updatedContent     string
@@ -107,20 +132,5 @@ func convertNote() ([]byte, error) {
 		}
 	}
 
-	return []byte(updatedContent), err
-}
-
-func createLogseqNote(content []byte) error {
-	file, err := os.Create(logseqFileName)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	_, err = file.Write(content)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return []byte(updatedContent), nil
 }
