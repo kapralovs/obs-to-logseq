@@ -8,42 +8,28 @@ func ConvertLinks(byteContent []byte) ([]byte, error) {
 	)
 
 	for _, v := range content {
-		if startLink == "" &&
-			v != '[' && v != '|' && v != ']' {
-			updatedContent += string(v)
-		}
-
-		if isFullLink && v != ']' {
-			continue
-		}
-
-		if startLink == "[[" {
-			if v == ']' {
+		switch v {
+		case '[':
+			if startLink == "" || startLink == "[" {
+				startLink += string(v)
+				updatedContent += string(v)
+			}
+		case '|':
+			isFullLink = true
+		case ']':
+			if startLink == "[[" {
 				if endLink == "" || endLink == "]" {
 					endLink += string(v)
 				}
+
 				updatedContent += string(v)
-
-				continue
 			}
-
-			if v == '|' {
-				isFullLink = true
+		default:
+			if isFullLink {
 				continue
 			}
 
 			updatedContent += string(v)
-		}
-
-		if v == '[' {
-			switch startLink {
-			case "":
-				startLink += string(v)
-				updatedContent += string(v)
-			case "[":
-				startLink += string(v)
-				updatedContent += string(v)
-			}
 		}
 	}
 
