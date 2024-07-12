@@ -32,13 +32,23 @@ func TestConvertLinks(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "ContentWithoutLinks",
+			name: "Content without links",
 			args: args{
 				content: []byte("12345"),
 			},
 			want:    []byte("12345"),
 			wantErr: false,
 		},
+		/*
+			{
+				name: "Invalid",
+				args: args{
+					content: []byte{},
+				},
+				want:    nil,
+				wantErr: true,
+			},
+		*/
 		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
