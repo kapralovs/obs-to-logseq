@@ -15,7 +15,9 @@ func ConvertLinks(byteContent []byte) ([]byte, error) {
 				updatedContent += string(v)
 			}
 		case '|':
-			isFullLink = true
+			if startLink == "[[" {
+				isFullLink = true
+			}
 		case ']':
 			if startLink == "[[" {
 				if endLink == "" || endLink == "]" {
@@ -26,6 +28,13 @@ func ConvertLinks(byteContent []byte) ([]byte, error) {
 			}
 		default:
 			if isFullLink {
+				if endLink == "]]" {
+					updatedContent += string(v)
+					startLink = ""
+					endLink = ""
+					isFullLink = false
+				}
+
 				continue
 			}
 

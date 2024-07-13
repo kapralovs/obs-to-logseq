@@ -20,7 +20,7 @@ func TestConvertLinks(t *testing.T) {
 			args: args{
 				content: []byte("Это заметка про язык программирования [[Golang|Go]]."),
 			},
-			want:    []byte("Это заметка про язык программирования [[Golang]]"),
+			want:    []byte("Это заметка про язык программирования [[Golang]]."),
 			wantErr: false,
 		},
 		{
